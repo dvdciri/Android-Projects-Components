@@ -108,6 +108,12 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
         return getSelectedItemListInternal().size();
     }
 
+    /**
+     * @return true if any item is currently selected; false if not
+     */
+    public boolean isSelectionActive() {
+        return (getSelectedItemListInternal().size() > 0);
+    }
 
     /**
      * Get the list of selected item
