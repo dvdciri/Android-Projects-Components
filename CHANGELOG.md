@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- MultiChoiceAdapter#isSelectionActive()
+
+### Changed
+### Fixed
+### Deleted
+
+## [2.0.0]
 ### Changed
 - Moved logic related to the MultiChoiceRecyclerView class into the MultiChoiceAdapter
 - Internal improvements getting rid of holding views states
