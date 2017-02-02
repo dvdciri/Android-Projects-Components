@@ -184,6 +184,8 @@ public class SampleToolbarActivity extends BaseActivity {
 
                 case R.id.plural_mode:
                     setQuantityMode(QuantityMode.PLURALS);
+
+                    Toast.makeText(getApplicationContext(), "set toolbar to use QuantityMode.PLURALS", Toast.LENGTH_SHORT).show();
                     return true;
             }
         }
