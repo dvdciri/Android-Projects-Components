@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Possibility to use QuantityStrings for the toolbar while selecting items
+
 ### Changed
 ### Fixed
 ### Deleted

@@ -17,4 +17,10 @@
     <string name="deselect_all">Deselect All</string>
     <string name="select_third_item">Select Third Item</string>
     <string name="single_click_mode">Single Click Mode</string>
+    <string name="plural_mode">Plural Mode</string>
+
+    <plurals name="numberOfSelectedItems">
+        <item quantity="one">One item selected</item>
+        <item quantity="other">%d items selected</item>
+    </plurals>
 </resources>
