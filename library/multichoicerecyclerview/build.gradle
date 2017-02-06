@@ -8,7 +8,7 @@ checkstyle {
 }
 
 ext {
-    PUBLISH_VERSION = '2.1.0'
+    PUBLISH_VERSION = '2.1.1'
     SUPPORT_LIBRARY_VERSION = '24.2.1'
     BUILD_TOOLS = "23.0.3"
     TARGET_SDK = 23

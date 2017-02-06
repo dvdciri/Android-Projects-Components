@@ -62,7 +62,8 @@ public class SampleCustomActivity extends BaseActivity {
     private void setUpAdapter(List<MessageV0> messageV0s) {
         MultiChoiceToolbar multiChoiceToolbar =
                 new MultiChoiceToolbar.Builder(SampleCustomActivity.this, toolbar)
-                        .setTitles(toolbarTitle(), "")
+                        .setTitles(getString(toolbarTitle()
+                        ), "")
                         .setMultiChoiceColours(R.color.colorPrimaryMulti, R.color.colorPrimaryDarkMulti)
                         .setDefaultIcon(R.drawable.ic_arrow_back_white_24dp, new View.OnClickListener() {
                             @Override
@@ -98,8 +99,8 @@ public class SampleCustomActivity extends BaseActivity {
     }
 
     @Override
-    protected String toolbarTitle() {
-        return getString(R.string.custom_selection_view);
+    protected int toolbarTitle() {
+        return R.string.custom_selection_view;
     }
 
     @Override

@@ -35,7 +35,7 @@ public class GalleryActivity extends BaseActivity {
 
         MultiChoiceToolbar multiChoiceToolbar =
                 new MultiChoiceToolbar.Builder(GalleryActivity.this, toolbar)
-                        .setTitles(toolbarTitle(), "")
+                        .setTitles(getString(toolbarTitle()), "")
                         .setMultiChoiceColours(R.color.colorPrimaryMulti, R.color.colorPrimaryDarkMulti)
                         .setDefaultIcon(R.drawable.ic_arrow_back_white_24dp, new View.OnClickListener() {
                             @Override
@@ -52,8 +52,8 @@ public class GalleryActivity extends BaseActivity {
     }
 
     @Override
-    protected String toolbarTitle() {
-        return getString(R.string.image_gallery);
+    protected int toolbarTitle() {
+        return R.string.image_gallery;
     }
 
     @Override

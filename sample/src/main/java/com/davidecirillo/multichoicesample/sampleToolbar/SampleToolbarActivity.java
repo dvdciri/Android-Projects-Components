@@ -124,7 +124,7 @@ public class SampleToolbarActivity extends BaseActivity {
                 break;
 
             case QuantityMode.STRING:
-                builder.setTitles(toolbarTitle(), "item selected");
+                builder.setTitles(getString(toolbarTitle()), "item selected");
                 break;
 
             case QuantityMode.PLURALS:
@@ -199,8 +199,8 @@ public class SampleToolbarActivity extends BaseActivity {
     }
 
     @Override
-    protected String toolbarTitle() {
-        return getString(R.string.toolbar_controls);
+    protected int toolbarTitle() {
+        return R.string.toolbar_controls;
     }
 
     @QuantityMode

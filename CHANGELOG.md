@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-### Added
 ### Changed
+- `MultiChoiceToolbar.Builder#setTitles()` is now available as `(String, String)` or `(@StringRes int, @PluralsRes int)`
+
+### Deprecated
+- Marked `MultiChoiceToolbar.Builder#setTitles(String, @PluralsRes int)` as deprecated in favor of `(@StringRes int, @PluralsRes int)`
+
+### Added
 ### Fixed
 ### Deleted
 
