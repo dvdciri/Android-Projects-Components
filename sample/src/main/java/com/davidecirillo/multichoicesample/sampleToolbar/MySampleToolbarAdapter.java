@@ -89,4 +89,11 @@ class MySampleToolbarAdapter extends MultiChoiceAdapter<MySampleToolbarViewHolde
     public int getItemCount() {
         return mList.size();
     }
+
+    public void swap(ArrayList<String> data) {
+        mList.clear();
+        mList.addAll(data);
+
+        refreshDataSet();
+    }
 }

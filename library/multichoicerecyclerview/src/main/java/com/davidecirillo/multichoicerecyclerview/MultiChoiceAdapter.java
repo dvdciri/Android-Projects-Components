@@ -315,24 +315,12 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
     }
 
     private void refreshDataSetInternal() {
-        if (mItemList.isEmpty()) {
-            for (int i = 0; i < getItemCount(); i++) {
-                mItemList.put(i, State.INACTIVE);
-            }
-        } else if (mItemList.size() > getItemCount()) { // We have new items, let's add only the new ones as inactive
-            for (int i = 0; i < getItemCount(); i++) {
-                if (mItemList.get(i) != null) {
-                    mItemList.put(i, State.INACTIVE);
-                }
-            }
-        } else {
-            // Keep just the number of item in the getItemCount remove all the others.
-            for (int i = 0; i < mItemList.size(); i++) {
-                if (i + 1 > getItemCount()) {
-                    mItemList.remove(i);
-                }
-            }
+        mItemList.clear();
+
+        for (int i = 0; i < getItemCount(); i++) {
+            mItemList.put(i, State.INACTIVE);
         }
+
         processNotifyDataSetChanged();
     }
 

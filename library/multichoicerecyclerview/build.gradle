@@ -8,10 +8,10 @@ checkstyle {
 }
 
 ext {
-    PUBLISH_VERSION = '2.4.0'
-    SUPPORT_LIBRARY_VERSION = '24.2.1'
-    BUILD_TOOLS = "25.0.0"
-    TARGET_SDK = 23
+    PUBLISH_VERSION = '2.3.0'
+    SUPPORT_LIBRARY_VERSION = '25.2.0'
+    BUILD_TOOLS = "23.0.3"
+    TARGET_SDK = 25
 
     PUBLISH_ARTIFACT_ID = 'multichoicerecyclerview'
     PUBLISH_GROUP_ID = 'com.davidecirillo.multichoicerecyclerview'
@@ -63,6 +63,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildToolsVersion '25.0.0'
 }
 
 configurations.all {
