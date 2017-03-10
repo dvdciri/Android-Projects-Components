@@ -21,9 +21,15 @@ import com.davidecirillo.multichoicesample.ResultActivity;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class SampleToolbarActivity extends BaseActivity {
 
@@ -42,7 +48,6 @@ public class SampleToolbarActivity extends BaseActivity {
     }
 
     public static final String SELECTED_ITEMS = "selectedItems";
-
     @BindView(R.id.multiChoiceRecyclerView)
     RecyclerView mMultiChoiceRecyclerView;
 
@@ -54,7 +59,8 @@ public class SampleToolbarActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        stringList = new ArrayList<>();
+        mMySampleToolbarAdapter = new MySampleToolbarAdapter(new ArrayList<String>(), getApplicationContext());
+        mMultiChoiceRecyclerView.setAdapter(mMySampleToolbarAdapter);
 
         setUpMultiChoiceRecyclerView();
     }
@@ -80,22 +86,30 @@ public class SampleToolbarActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        ((MultiChoiceAdapter) mMultiChoiceRecyclerView.getAdapter()).onSaveInstanceState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        ((MultiChoiceAdapter) mMultiChoiceRecyclerView.getAdapter()).onRestoreInstanceState(savedInstanceState);
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
     private void setUpMultiChoiceRecyclerView() {
         mMultiChoiceRecyclerView.setLayoutManager(new GridLayoutManager(this, 3, LinearLayoutManager.VERTICAL, false));
 
-        stringList = getSampleList();
+        getSampleList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(new Subscriber<List<String>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(List<String> strings) {
+                        setUpAdapter(strings);
+                    }
+                });
+    }
+
+    private void setUpAdapter(List<String> strings) {
+        stringList = new ArrayList<>(strings);
 
         MultiChoiceToolbar.Builder builder = new MultiChoiceToolbar.Builder(SampleToolbarActivity.this, toolbar)
                 .setMultiChoiceColours(R.color.colorPrimaryMulti, R.color.colorPrimaryDarkMulti)
@@ -125,18 +139,24 @@ public class SampleToolbarActivity extends BaseActivity {
 
         MultiChoiceToolbar multiChoiceToolbar = builder.build();
 
-        mMySampleToolbarAdapter = new MySampleToolbarAdapter(stringList, getApplicationContext());
-        mMySampleToolbarAdapter.setMultiChoiceToolbar(multiChoiceToolbar);
+//        mMySampleToolbarAdapter = new MySampleToolbarAdapter(stringList, getApplicationContext());
+//        mMultiChoiceRecyclerView.setAdapter(mMySampleToolbarAdapter);
 
-        mMultiChoiceRecyclerView.setAdapter(mMySampleToolbarAdapter);
+        mMySampleToolbarAdapter.swap(stringList);
+
+        mMySampleToolbarAdapter.setMultiChoiceToolbar(multiChoiceToolbar);
     }
 
-    private ArrayList<String> getSampleList() {
-        ArrayList<String> sampleList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            sampleList.add("Test item " + i);
-        }
-        return sampleList;
+    private Observable<List<String>> getSampleList() {
+        return Observable
+                .range(0, 100)
+                .map(new Func1<Integer, String>() {
+                    @Override
+                    public String call(Integer integer) {
+                        return "Test item " + integer;
+                    }
+                })
+                .toList();
     }
 
     @Override
@@ -158,11 +178,7 @@ public class SampleToolbarActivity extends BaseActivity {
                     return true;
 
                 case R.id.select_3:
-                    boolean select = mMySampleToolbarAdapter.select(2);
-                    if (!select) {
-                        Toast.makeText(this, "Item not selected because not in multi choice mode or single click mode, select something first.",
-                                Toast.LENGTH_LONG).show();
-                    }
+                    mMySampleToolbarAdapter.select(2);
                     return true;
 
                 case R.id.single_click_mode:
