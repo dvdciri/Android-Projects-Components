@@ -1,6 +1,7 @@
 package com.davidecirillo.multichoicerecyclerview;
 
 import android.content.res.TypedArray;
+import android.support.annotation.NonNull;
 import android.support.annotation.PluralsRes;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
@@ -99,7 +100,7 @@ public class MultiChoiceToolbar {
          *                      selected item and "title" is this param
          * @return Builder so you can chain together setters and build
          */
-        public Builder setTitles(String defaultTitle, String selectedTitle) {
+        public Builder setTitles(String defaultTitle, @NonNull String selectedTitle) {
             this.mDefaultToolbarTitle = defaultTitle;
             this.mSelectedToolbarTitle = selectedTitle;
             return this;
