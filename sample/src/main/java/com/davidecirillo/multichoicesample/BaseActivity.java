@@ -2,9 +2,12 @@ package com.davidecirillo.multichoicesample;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import com.davidecirillo.multichoicerecyclerview.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +40,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            if (toolbarTitle() != null) {
+            if (toolbarTitle() != Constants.INVALID_RES) {
                 getSupportActionBar().setTitle(toolbarTitle());
             }
 
@@ -55,8 +58,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    protected String toolbarTitle() {
-        return null;
+    @StringRes
+    protected int toolbarTitle() {
+        return Constants.INVALID_RES;
     }
 
     protected abstract int setActivityIdentifier();

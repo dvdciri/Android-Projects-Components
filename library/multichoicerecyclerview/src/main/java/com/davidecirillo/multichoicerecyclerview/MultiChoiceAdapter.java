@@ -2,14 +2,17 @@ package com.davidecirillo.multichoicerecyclerview;
 
 import android.Manifest;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,11 +23,12 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
 
     private static final float DESELECTED_ALPHA = 1f;
     static final float SELECTED_ALPHA = 0.25f;
+    private static final String EXTRA_ITEM_LIST = "EXTRA_ITEM_LIST";
 
     boolean mIsInMultiChoiceMode;
     boolean mIsInSingleClickMode;
 
-    private LinkedHashMap<Integer, State> mItemList = new LinkedHashMap<>();
+    private Map<Integer, State> mItemList = new LinkedHashMap<>();
     private Listener mListener = null;
     private MultiChoiceToolbarHelper mMultiChoiceToolbarHelper;
     private RecyclerView mRecyclerView;
@@ -72,21 +76,33 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
         performAll(Action.SELECT);
     }
 
-
     /**
-     * Select a view from position in the adapter only if is the multi choice mode or single click choice mode is activated
+     * Select an item from the adapter position
      *
-     * @param position the position of the view in the adapter
-     * @return true if has been selected false otherwise
+     * @param position adapter position of ther view which will be selected
+     * @return True if the view has been selected, False if the view is already selected or is not part of the item list
      */
     public boolean select(int position) {
-        if (mIsInMultiChoiceMode || mIsInSingleClickMode && mItemList.containsKey(position)) {
+            if (mItemList.containsKey(position) && mItemList.get(position) == State.INACTIVE) {
             perform(Action.SELECT, position, true, true);
             return true;
         }
         return false;
     }
 
+    /**
+     * Deselect an item from the adapter position
+     *
+     * @param position adapter position of the view which will be deselected
+     * @return True if the view has been deselected, False if the view is already deselected or is not part of the item list
+     */
+    public boolean deselect(int position) {
+        if (mItemList.containsKey(position) && mItemList.get(position) == State.ACTIVE) {
+            perform(Action.DESELECT, position, true, true);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Set the selection of the RecyclerView to always single click (instead of first long click and then single click)
@@ -134,6 +150,23 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
         return mIsInSingleClickMode;
     }
 
+    public void onSaveInstanceState(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            savedInstanceState.putSerializable(EXTRA_ITEM_LIST, (Serializable) mItemList);
+        }
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mItemList = (Map<Integer, State>) savedInstanceState.getSerializable(EXTRA_ITEM_LIST);
+
+            int selectedListSize = getSelectedItemListInternal().size();
+            updateToolbarIfNeeded(selectedListSize);
+            updateMultiChoiceMode(selectedListSize);
+            processNotifyDataSetChanged();
+        }
+    }
+
     //endregion
 
     //region Private methods
@@ -166,6 +199,9 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
             } else {
                 setActive(view, false);
             }
+        } else {
+            mItemList.put(position, State.INACTIVE);
+            processUpdate(view, position);
         }
     }
 

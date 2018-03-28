@@ -11,12 +11,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter.SELECTED_ALPHA;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -92,15 +96,15 @@ public class MultiChoiceAdapterTest {
         // Given
         mMultiChoiceAdapter.mIsInMultiChoiceMode = false;
         mMultiChoiceAdapter.mIsInSingleClickMode = false;
-        when(mMockItemList.containsKey(mTestPosition)).thenReturn(true);
-        when(mMockItemList.get(mTestPosition)).thenReturn(MultiChoiceAdapter.State.INACTIVE);
+        when(mMockItemList.containsKey(RecyclerView.NO_POSITION)).thenReturn(true);
+        when(mMockItemList.get(RecyclerView.NO_POSITION)).thenReturn(MultiChoiceAdapter.State.INACTIVE);
 
         // When
-        mMultiChoiceAdapter.onBindViewHolder(mViewHolder, mTestPosition);
+        mMultiChoiceAdapter.onBindViewHolder(mViewHolder, RecyclerView.NO_POSITION);
         mViewHolder.itemView.callOnClick();
 
         // Then
-        verify(mMockItemList, times(0)).put(mTestPosition, MultiChoiceAdapter.State.ACTIVE);
+        verify(mMockItemList, times(0)).put(RecyclerView.NO_POSITION, MultiChoiceAdapter.State.ACTIVE);
         verify(mMockItemView, times(0)).setAlpha(SELECTED_ALPHA);
     }
 
@@ -195,6 +199,8 @@ public class MultiChoiceAdapterTest {
         ArgumentCaptor<View.OnClickListener> clickListenerCapture = ArgumentCaptor.forClass(View.OnClickListener.class);
         mMultiChoiceAdapter.mIsInMultiChoiceMode = false;
         mMultiChoiceAdapter.mIsInSingleClickMode = false;
+        when(mMockItemList.containsKey(RecyclerView.NO_POSITION)).thenReturn(true);
+        when(mMockItemList.get(RecyclerView.NO_POSITION)).thenReturn(MultiChoiceAdapter.State.ACTIVE);
 
         // When
         mMultiChoiceAdapter.onBindViewHolder(mViewHolder, mTestPosition);
@@ -257,74 +263,94 @@ public class MultiChoiceAdapterTest {
     }
 
     @Test
-    public void testItemSelected() throws Exception {
+    public void givenItemInactiveWhenSelectThenSelect() throws Exception {
         // Given
-        addInactiveTestItems(1);
-        mMultiChoiceAdapter.setItemList(mRealItemList);
 
         when(mMockItemList.containsKey(mTestPosition)).thenReturn(true);
-        mMultiChoiceAdapter.mIsInMultiChoiceMode = true;
+        when(mMockItemList.get(mTestPosition)).thenReturn(MultiChoiceAdapter.State.INACTIVE);
 
         // When
         mMultiChoiceAdapter.select(mTestPosition);
 
         // Then
-        verify(mMockMultiChoiceListener, times(1)).OnItemSelected(mTestPosition, 1, 1);
+        verify(mMockItemList, times(1)).put(mTestPosition, MultiChoiceAdapter.State.ACTIVE);
     }
 
     @Test
-    public void testItemDeselected() throws Exception {
+    public void givenItemActiveWhenSelectThenNothing() throws Exception {
         // Given
-        ArgumentCaptor<View.OnClickListener> clickListenerCapture = ArgumentCaptor.forClass(View.OnClickListener.class);
-        mRealItemList.put(RecyclerView.NO_POSITION, MultiChoiceAdapter.State.ACTIVE);
-        mMultiChoiceAdapter.setItemList(mRealItemList);
 
         when(mMockItemList.containsKey(mTestPosition)).thenReturn(true);
-        mMultiChoiceAdapter.mIsInMultiChoiceMode = true;
+        when(mMockItemList.get(mTestPosition)).thenReturn(MultiChoiceAdapter.State.ACTIVE);
 
         // When
-        mMultiChoiceAdapter.onBindViewHolder(mViewHolder, mTestPosition);
-
-        verify(mMockItemView, times(1)).setOnClickListener(clickListenerCapture.capture());
-        clickListenerCapture.getValue().onClick(mMockItemView);
+        mMultiChoiceAdapter.select(mTestPosition);
 
         // Then
-        verify(mMockMultiChoiceListener, times(1)).OnItemDeselected(RecyclerView.NO_POSITION, 0, 1);
+        verify(mMockItemList, times(0)).put(anyInt(), any(MultiChoiceAdapter.State.class));
     }
 
     @Test
-    public void testAllItemSelected() throws Exception {
+    public void givenItemActiveWhenDeselectThenDeselect() throws Exception {
         // Given
-        addInactiveTestItems(20);
-        mMultiChoiceAdapter.setItemList(mRealItemList);
 
-        when(mMockItemList.containsKey(any(Integer.class))).thenReturn(true);
-        mMultiChoiceAdapter.mIsInMultiChoiceMode = true;
+        when(mMockItemList.containsKey(mTestPosition)).thenReturn(true);
+        when(mMockItemList.get(mTestPosition)).thenReturn(MultiChoiceAdapter.State.ACTIVE);
+
+        // When
+        mMultiChoiceAdapter.deselect(mTestPosition);
+
+        // Then
+        verify(mMockItemList, times(1)).put(mTestPosition, MultiChoiceAdapter.State.INACTIVE);
+    }
+
+    @Test
+    public void givenItemInactiveWhenDeselectThenNothing() throws Exception {
+        // Given
+        when(mMockItemList.containsKey(mTestPosition)).thenReturn(true);
+        when(mMockItemList.get(mTestPosition)).thenReturn(MultiChoiceAdapter.State.INACTIVE);
+
+        // When
+        mMultiChoiceAdapter.deselect(mTestPosition);
+
+        // Then
+        verify(mMockItemList, times(0)).put(anyInt(), any(MultiChoiceAdapter.State.class));
+    }
+
+    @Test
+    public void givenThreeItemWhenSelectAllThenAllSelected() throws Exception {
+        // Given
+        int expectedCount = 3;
+        when(mMockItemList.size()).thenReturn(expectedCount);
+        HashSet<Integer> value = new HashSet<>();
+        value.add(0);
+        value.add(1);
+        value.add(2);
+        when(mMockItemList.keySet()).thenReturn(value);
 
         // When
         mMultiChoiceAdapter.selectAll();
 
         // Then
-        verify(mMockMultiChoiceListener, times(1)).OnSelectAll(20, 20);
+        verify(mMockItemList, times(expectedCount)).put(anyInt(), eq(MultiChoiceAdapter.State.ACTIVE));
     }
 
     @Test
-    public void testAllItemDeselected() throws Exception {
+    public void givenThreeItemWhenDeselectAllThenAllDeselected() throws Exception {
         // Given
-        addInactiveTestItems(20);
-        mRealItemList.put(0, MultiChoiceAdapter.State.ACTIVE);
-        mRealItemList.put(1, MultiChoiceAdapter.State.ACTIVE);
-        mRealItemList.put(2, MultiChoiceAdapter.State.ACTIVE);
-        mMultiChoiceAdapter.setItemList(mRealItemList);
-
-        when(mMockItemList.containsKey(any(Integer.class))).thenReturn(true);
-        mMultiChoiceAdapter.mIsInMultiChoiceMode = true;
+        int expectedCount = 3;
+        when(mMockItemList.size()).thenReturn(expectedCount);
+        HashSet<Integer> value = new HashSet<>();
+        value.add(0);
+        value.add(1);
+        value.add(2);
+        when(mMockItemList.keySet()).thenReturn(value);
 
         // When
         mMultiChoiceAdapter.deselectAll();
 
         // Then
-        verify(mMockMultiChoiceListener, times(1)).OnDeselectAll(0, 20);
+        verify(mMockItemList, times(expectedCount)).put(anyInt(), eq(MultiChoiceAdapter.State.INACTIVE));
     }
 
     private void addInactiveTestItems(int count) {

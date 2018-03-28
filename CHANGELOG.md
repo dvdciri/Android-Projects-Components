@@ -5,10 +5,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-### Added
 ### Changed
+### Deprecated
+### Added
 ### Fixed
 ### Deleted
+
+## [2.3.0]
+### Changed
+- `MultiChoiceToolbar.Builder#setTitles()` is now available as `(String, String)` or `(@StringRes int, @PluralsRes int)`
+
+### Deprecated
+- Marked `MultiChoiceToolbar.Builder#setTitles(String, @PluralsRes int)` as deprecated in favor of `(@StringRes int, @PluralsRes int)`
+
+### Added
+- Added possibility to let the library handle the savedInstanceState in order to keep the selection in place when orientation
+and other configuration change
+- Added `deselect(int position)` method to the MultiChoiceAdapter
+
+## [2.1.0]
+### Added
+- Possibility to use QuantityStrings for the toolbar while selecting items
 
 ## [2.0.0]
 ### Changed

@@ -1,6 +1,8 @@
 package com.davidecirillo.multichoicerecyclerview;
 
 import android.content.res.TypedArray;
+import android.support.annotation.PluralsRes;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -11,6 +13,7 @@ public class MultiChoiceToolbar {
     private AppCompatActivity mAppCompatActivity;
     private Toolbar mToolbar;
     private String mDefaultToolbarTitle;
+    private @PluralsRes int mSelectedQuantityTitle;
     private String mSelectedToolbarTitle;
     private int mDefaultPrimaryColor = 0;
     private int mDefaultPrimaryColorDark = 0;
@@ -24,6 +27,7 @@ public class MultiChoiceToolbar {
         this.mAppCompatActivity = builder.mAppCompatActivity;
         this.mToolbar = builder.mToolbar;
         this.mDefaultToolbarTitle = builder.mDefaultToolbarTitle.trim();
+        this.mSelectedQuantityTitle = builder.mSelectedQuantityTitle;
         this.mSelectedToolbarTitle = builder.mSelectedToolbarTitle.trim();
         this.mDefaultPrimaryColor = builder.mDefaultPrimaryColor;
         this.mDefaultPrimaryColorDark = builder.mDefaultPrimaryColorDark;
@@ -43,8 +47,9 @@ public class MultiChoiceToolbar {
     public static class Builder {
         private AppCompatActivity mAppCompatActivity;
         private Toolbar mToolbar;
-        private String mDefaultToolbarTitle;
-        private String mSelectedToolbarTitle;
+        private String mDefaultToolbarTitle = "";
+        private @PluralsRes int mSelectedQuantityTitle = Constants.INVALID_RES;
+        private String mSelectedToolbarTitle = "";
 
         // Colours
         private int mDefaultPrimaryColor = 0;
@@ -101,6 +106,34 @@ public class MultiChoiceToolbar {
         }
 
         /**
+         * Set the titles for the different states of the toolbar default/multiChoice
+         *
+         * @param defaultTitle          Title when the toolbar shown is the default one
+         * @param selectedQuantityTitle Title shown when some item are selected. Will use the plural-feature to let you define the correct format.
+         * @return Builder so you can chain together setters and build
+         */
+        public Builder setTitles(@StringRes int defaultTitle, @PluralsRes int selectedQuantityTitle) {
+            this.mDefaultToolbarTitle = mAppCompatActivity.getString(defaultTitle);
+            this.mSelectedQuantityTitle = selectedQuantityTitle;
+            return this;
+        }
+
+        /**
+         * Set the titles for the different states of the toolbar default/multiChoice
+         *
+         * @param defaultTitle          Title when the toolbar shown is the default one
+         * @param selectedQuantityTitle Title shown when some item are selected. Will use the plural-feature to let you define the correct format.
+         * @return Builder so you can chain together setters and build
+         * @deprecated use {@link #setTitles(int, int)} instead
+         */
+        @Deprecated
+        public Builder setTitles(String defaultTitle, @PluralsRes int selectedQuantityTitle) {
+            this.mDefaultToolbarTitle = defaultTitle;
+            this.mSelectedQuantityTitle = selectedQuantityTitle;
+            return this;
+        }
+
+        /**
          * Set the default icon that will be shown when is not in multi choice mode.
          * If not set there will be no icon.
          *
@@ -143,6 +176,11 @@ public class MultiChoiceToolbar {
 
     String getDefaultToolbarTitle() {
         return mDefaultToolbarTitle;
+    }
+
+    @PluralsRes
+    int getSelectedToolbarQuantityTitle() {
+        return mSelectedQuantityTitle;
     }
 
     String getSelectedToolbarTitle() {

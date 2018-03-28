@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ResultActivity"/>
+
         <activity android:name=".sampleToolbar.SampleToolbarActivity"/>
         <activity android:name=".sampleCustomView.SampleCustomActivity"/>
         <activity android:name=".sampleImageGallery.GalleryActivity"/>

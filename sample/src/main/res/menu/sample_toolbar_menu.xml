@@ -25,4 +25,10 @@
         android:title="@string/single_click_mode"
         app:showAsAction="never"
         />
+
+    <item
+        android:id="@+id/plural_mode"
+        android:title="@string/plural_mode"
+        app:showAsAction="never"
+        />
 </menu>

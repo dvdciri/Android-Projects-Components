@@ -2,9 +2,11 @@ package com.davidecirillo.multichoicerecyclerview;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.support.annotation.PluralsRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -94,12 +96,20 @@ class MultiChoiceToolbarHelper {
 
     private void updateToolbarTitle(int itemNumber) {
         if (itemNumber > 0) {
+            @PluralsRes int selectedToolbarQuantityTitle = mMultiChoiceToolbar.getSelectedToolbarQuantityTitle();
             String selectedToolbarTitle = mMultiChoiceToolbar.getSelectedToolbarTitle();
-            if (selectedToolbarTitle != null) {
+
+            // if set, prefer the quantity-res over the given string or just use the number of selected items
+            if (selectedToolbarQuantityTitle != 0 && selectedToolbarQuantityTitle != Constants.INVALID_RES) {
+                mSupportActionBar.setTitle(mAppCompatActivity.getResources().getQuantityString(selectedToolbarQuantityTitle, itemNumber, itemNumber));
+
+            } else if (selectedToolbarTitle != null) {
                 mSupportActionBar.setTitle(String.format(Locale.UK, SELECTED_TOOLBAR_TITLE_FORMAT, itemNumber, selectedToolbarTitle));
+
             } else {
-                mSupportActionBar.setTitle(itemNumber);
+                mSupportActionBar.setTitle(String.valueOf(itemNumber));
             }
+
         } else {
             String defaultToolbarTitle = mMultiChoiceToolbar.getDefaultToolbarTitle();
             if (defaultToolbarTitle != null) {
