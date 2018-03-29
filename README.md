@@ -91,5 +91,4 @@ Customize the activation or deactivation just overriding the setActive(View root
 [Changelog file](https://github.com/dvdciri/MultiChoiceRecyclerView/blob/master/CHANGELOG.md)
 
 ## License
-
 Apache 2.0 © Davide Cirillo
