@@ -20,7 +20,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,7 +48,7 @@ public class MultiChoiceAdapterTest {
 
         mViewHolder = new TestViewHolder(mMockItemView);
 
-        mMultiChoiceAdapter = new TestAdapter();
+        mMultiChoiceAdapter = spy(new TestAdapter());
         mMultiChoiceAdapter.setItemList(mMockItemList);
         mMultiChoiceAdapter.setMultiChoiceSelectionListener(mMockMultiChoiceListener);
 
@@ -59,7 +59,7 @@ public class MultiChoiceAdapterTest {
 
     @After
     public void tearDown() throws Exception {
-
+        ((TestAdapter) mMultiChoiceAdapter).setItemCountTest(0);
     }
 
     @Test
@@ -353,6 +353,39 @@ public class MultiChoiceAdapterTest {
         verify(mMockItemList, times(expectedCount)).put(anyInt(), eq(MultiChoiceAdapter.State.INACTIVE));
     }
 
+    @Test
+    public void testWhenNotifyAdapterDataSetChangedThenClear() throws Exception {
+        // Given
+
+        // When
+        mMultiChoiceAdapter.notifyAdapterDataSetChanged();
+
+        // Then
+        verify(mMockItemList, times(1)).clear();
+    }
+
+    @Test
+    public void testWhenNotifyAdapterDataSetChangedThenItemReset() throws Exception {
+        ArgumentCaptor<Integer> argumentCaptor = ArgumentCaptor.forClass(Integer.class);
+
+        // Given
+        ((TestAdapter) mMultiChoiceAdapter).setItemCountTest(10);
+
+        // When
+        mMultiChoiceAdapter.notifyAdapterDataSetChanged();
+
+        // Then
+        verify(mMockItemList, times(10)).put(argumentCaptor.capture(), eq(MultiChoiceAdapter.State.INACTIVE));
+    }
+
+    @Test
+    public void testWhenNotifyAdapterDataSetChangedThenProcessNotifyDataSetChangedCalled() throws Exception {
+        mMultiChoiceAdapter.notifyAdapterDataSetChanged();
+
+        verify(mMultiChoiceAdapter, times(1)).processNotifyDataSetChanged();
+
+    }
+
     private void addInactiveTestItems(int count) {
         for (int i = 0; i < count; i++) {
             mRealItemList.put(i, MultiChoiceAdapter.State.INACTIVE);
@@ -368,15 +401,20 @@ public class MultiChoiceAdapterTest {
     private class TestAdapter extends MultiChoiceAdapter<TestViewHolder> {
 
         private View.OnClickListener mOnClickListener;
+        private int mTestItemCount;
 
         @Override
         public TestViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return null;
         }
 
+        public void setItemCountTest(int anInt) {
+            mTestItemCount = anInt;
+        }
+
         @Override
         public int getItemCount() {
-            return 0;
+            return mTestItemCount;
         }
 
         @Override

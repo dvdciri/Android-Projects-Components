@@ -83,7 +83,7 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
      * @return True if the view has been selected, False if the view is already selected or is not part of the item list
      */
     public boolean select(int position) {
-            if (mItemList.containsKey(position) && mItemList.get(position) == State.INACTIVE) {
+        if (mItemList.containsKey(position) && mItemList.get(position) == State.INACTIVE) {
             perform(Action.SELECT, position, true, true);
             return true;
         }
@@ -161,10 +161,20 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
             mItemList = (Map<Integer, State>) savedInstanceState.getSerializable(EXTRA_ITEM_LIST);
 
             int selectedListSize = getSelectedItemListInternal().size();
-            updateToolbarIfNeeded(selectedListSize);
-            updateMultiChoiceMode(selectedListSize);
-            processNotifyDataSetChanged();
+            refreshMultiChoiceModeState(selectedListSize);
         }
+    }
+
+    /**
+     * <b>Use this method instead of {@link RecyclerView.Adapter#notifyDataSetChanged()} for
+     * notifying a change in the data set.</b>
+     *
+     * <b>NOTE: The new data will not keep the current selected status, all the item will be reset to INACTIVE.</b>
+     *
+     */
+    public void notifyAdapterDataSetChanged() {
+        notifyAdapterDataSetChangedInternal();
+        refreshMultiChoiceModeState(getSelectedItemListInternal().size());
     }
 
     //endregion
@@ -240,9 +250,7 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
 
         int selectedListSize = getSelectedItemListInternal().size();
 
-        updateToolbarIfNeeded(selectedListSize);
-
-        updateMultiChoiceMode(selectedListSize);
+        refreshMultiChoiceModeState(selectedListSize);
 
         processNotifyDataSetChanged();
 
@@ -255,19 +263,17 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
         }
     }
 
-    private void processNotifyDataSetChanged() {
+    void processNotifyDataSetChanged() {
         if (mRecyclerView != null) {
             notifyDataSetChanged();
         }
     }
 
-    private void updateToolbarIfNeeded(int selectedListSize) {
+    private void refreshMultiChoiceModeState(int selectedListSize) {
         if ((mIsInMultiChoiceMode || mIsInSingleClickMode || selectedListSize > 0) && mMultiChoiceToolbarHelper != null) {
             mMultiChoiceToolbarHelper.updateToolbar(selectedListSize);
         }
-    }
 
-    private void updateMultiChoiceMode(int selectedListSize) {
         boolean somethingSelected = selectedListSize > 0;
         if (mIsInMultiChoiceMode != somethingSelected) {
             mIsInMultiChoiceMode = somethingSelected;
@@ -292,8 +298,7 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
             mItemList.put(i, state);
         }
 
-        updateToolbarIfNeeded(selectedItems);
-        updateMultiChoiceMode(selectedItems);
+        refreshMultiChoiceModeState(selectedItems);
 
         processNotifyDataSetChanged();
 
@@ -306,6 +311,14 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
         }
     }
 
+    private void notifyAdapterDataSetChangedInternal() {
+        mItemList.clear();
+        for (int i = 0; i < getItemCount(); i++) {
+            mItemList.put(i, State.INACTIVE);
+        }
+        processNotifyDataSetChanged();
+    }
+
     @Override
     public void onClearButtonPressed() {
         performAll(Action.DESELECT);
@@ -315,9 +328,7 @@ public abstract class MultiChoiceAdapter<VH extends RecyclerView.ViewHolder> ext
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         mRecyclerView = recyclerView;
 
-        for (int i = 0; i < getItemCount(); i++) {
-            mItemList.put(i, State.INACTIVE);
-        }
+        notifyAdapterDataSetChangedInternal();
         super.onAttachedToRecyclerView(recyclerView);
     }
 

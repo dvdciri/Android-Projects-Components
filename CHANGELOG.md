@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 ### Deprecated
 ### Added
+- Added `notifyAdapterDataSetChanged()` method to the MultiChoiceAdapter in order to be able to keep a valid internal state of the selected/deselected items. This will then delegate the actual `RecyclerView.Adapter#notifyDataSetChanged()` to do the rest.
+
 ### Fixed
 ### Deleted
 
@@ -22,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added possibility to let the library handle the savedInstanceState in order to keep the selection in place when orientation
 and other configuration change
 - Added `deselect(int position)` method to the MultiChoiceAdapter
+
 
 ## [2.1.0]
 ### Added

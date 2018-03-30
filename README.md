@@ -66,9 +66,6 @@ Extend your adapter to the MultiChoiceAdapter and add it to the RecyclerView as 
     mMultiChoiceRecyclerView.setAdapter(myAdapter);
 ```
 
-**N.B.**
-- Do not forget to call **super.onBindViewHolder(holder, position);** when binding the view holder
-
 Customize the activation or deactivation just overriding the setActive(View rootView, boolean state) method of the MultiChoiceAdapter
 ```java
     @Override
@@ -83,6 +80,12 @@ Customize the activation or deactivation just overriding the setActive(View root
         }
     }
 ```
+
+<br>
+
+#### Important notes
+- Do not forget to call `super.onBindViewHolder(holder, position)` when binding the view holder
+- Use the method `notifyAdapterDataSetChanged()` instead of the classic `notifyDataSetChanged()` in order to let the library refresh the list and keep a correct internal library state.
 
 ## Features
 [Sample features](https://github.com/dvdciri/MultiChoiceRecyclerView/blob/master/FEATURES.md)

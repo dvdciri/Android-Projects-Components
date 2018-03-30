@@ -3,9 +3,9 @@ apply plugin: 'android-apt'
 
 ext {
     PUBLISH_VERSION = '2.0.0'
-    SUPPORT_LIBRARY_VERSION = '24.2.1'
-    BUILD_TOOLS = "23.0.3"
-    TARGET_SDK = 23
+    SUPPORT_LIBRARY_VERSION = '25.3.1'
+    BUILD_TOOLS = "25.0.0"
+    TARGET_SDK = 25
 }
 
 android {
@@ -26,7 +26,7 @@ android {
     }
 
     lintOptions {
-        abortOnError true
+        abortOnError false
         disable 'Overdraw','UnusedResources','IconLocation','ContentDescription','AppLinksAutoVerifyError','AppLinksAutoVerifyWarning'
     }
 
@@ -81,9 +81,6 @@ dependencies {
     compile "com.android.support:design:${SUPPORT_LIBRARY_VERSION}"
     compile 'com.jakewharton:butterknife:8.1.0'
     apt 'com.jakewharton:butterknife-compiler:8.1.0'
-    // RxAndroid - asynchronous operations
-    compile 'io.reactivex:rxandroid:1.0.1'
-    compile 'io.reactivex:rxjava:1.0.14'
     compile 'com.squareup.picasso:picasso:2.5.2'
     // Testing-only dependencies
     testCompile 'junit:junit:4.10'

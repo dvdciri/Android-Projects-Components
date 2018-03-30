@@ -31,13 +31,11 @@ import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
 import com.davidecirillo.multichoicesample.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by davidecirillo on 13/03/16.
- */
-class MySampleToolbarAdapter extends MultiChoiceAdapter<MySampleToolbarViewHolder> {
+public class MySampleToolbarAdapter extends MultiChoiceAdapter<MySampleToolbarViewHolder> {
 
-    private final ArrayList<String> mList;
+    private List<String> mList;
     private final Context mContext;
 
     MySampleToolbarAdapter(ArrayList<String> stringList, Context context) {
@@ -50,13 +48,11 @@ class MySampleToolbarAdapter extends MultiChoiceAdapter<MySampleToolbarViewHolde
         return new MySampleToolbarViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sample_toolbar, parent, false));
     }
 
-
     @Override
     public void onBindViewHolder(MySampleToolbarViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         holder.mTextView.setText(mList.get(position));
     }
-
 
     /**
      * Override this method to implement a custom active/deactive state
@@ -88,5 +84,9 @@ class MySampleToolbarAdapter extends MultiChoiceAdapter<MySampleToolbarViewHolde
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    public void setThis(final ArrayList<String> newData) {
+        mList = newData;
     }
 }

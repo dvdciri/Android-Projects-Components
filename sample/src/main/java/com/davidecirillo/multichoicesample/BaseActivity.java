@@ -31,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setToolbar();
     }
 
+    @SuppressWarnings("RestrictedApi")
     private void setToolbar() {
         setSupportActionBar(toolbar);
 

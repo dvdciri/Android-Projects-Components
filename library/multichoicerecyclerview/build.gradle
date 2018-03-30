@@ -8,10 +8,10 @@ checkstyle {
 }
 
 ext {
-    PUBLISH_VERSION = '2.3.0'
-    SUPPORT_LIBRARY_VERSION = '24.2.1'
-    BUILD_TOOLS = "23.0.3"
-    TARGET_SDK = 23
+    PUBLISH_VERSION = '2.4.0'
+    SUPPORT_LIBRARY_VERSION = '25.3.1'
+    BUILD_TOOLS = "25.0.0"
+    TARGET_SDK = 25
 
     PUBLISH_ARTIFACT_ID = 'multichoicerecyclerview'
     PUBLISH_GROUP_ID = 'com.davidecirillo.multichoicerecyclerview'
@@ -54,7 +54,7 @@ android {
     lintOptions {
         // if true, stop the gradle build if errors are found
         abortOnError true
-        disable 'GoogleAppIndexingWarning'
+        disable 'GoogleAppIndexingWarning', 'UnusedResources'
     }
 
     buildTypes {

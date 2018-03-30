@@ -85,4 +85,7 @@ It will automatically keep the selection in place when orientation and other con
 
         // Mode
         boolean isInSingleClickMode()
+
+        // Extra
+        void notifyAdapterDataSetChanged()
 ```

@@ -18,6 +18,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/selected_items"/>
+
+        <Button
+            android:id="@+id/notify_data_changed"
+            style="@android:style/Widget.Material.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change data"/>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
